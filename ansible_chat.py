@@ -1,3 +1,4 @@
+import asyncio
 import openai
 import re
 import logging
@@ -41,7 +42,7 @@ class AnsibleChat:
         self.load_files()
         self.load_messages()
 
-    def chat(self):
+    async def chat(self):
         print("Welcome to AnsibleChat powered by... GPT-3 and GPT-4! Type '/exit' to end the chat.")
         print("Known commands:")
         for command, data in self.prompt_mapping.items():
@@ -68,7 +69,7 @@ class AnsibleChat:
 
                 command_name, user_params, text = self.parse_input(user_input)
                 
-                response = self.handle_prompt(command_name, user_params, text)
+                response = await self.handle_prompt(command_name, user_params, text)
                 print("AnsibleChat:", response)
 
                 # Save prompt messages to their respective files when exiting the chat
@@ -101,7 +102,7 @@ class AnsibleChat:
 
         return command_name, user_params, text
 
-    def handle_prompt(self, command_name, user_params, text):
+    async def handle_prompt(self, command_name, user_params, text):
         if command_name is None:
             prompt_class = AnsiblePrompt
             command_name = 'ansible_prompt'  # Add a name for the default AnsiblePrompt
@@ -169,4 +170,4 @@ if __name__ == "__main__":
     openai.api_key = os.environ["OPENAI_API_KEY"]
 
     ansible_chat = AnsibleChat( prompts )
-    ansible_chat.chat()
+    asyncio.run(ansible_chat.chat())
